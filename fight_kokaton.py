@@ -116,7 +116,7 @@ class Bomb:
         """
         ランダムな色, サイズの爆弾円surfaceを生成する
         """
-        rad = random.randint(10, 50)  # 半径をランダムに設定
+        rad = random.randint(10, 50)  # 半径をランダムに設定,
         color = random.choice(__class__.colors)
         self.img = pg.Surface((2*rad, 2*rad))
         pg.draw.circle(self.img, color, (rad, rad), rad)
