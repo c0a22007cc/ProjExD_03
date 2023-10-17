@@ -4,11 +4,9 @@ import time
 
 import pygame as pg
 
-
 WIDTH = 1600  # ゲームウィンドウの幅
 HEIGHT = 900  # ゲームウィンドウの高さ
 NUM_OF_BOMBS = 5
-
 
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
@@ -35,7 +33,7 @@ class Bird:
         pg.K_RIGHT: (+5, 0),
     }
 
-    def __init__(self, num: int, xy: tuple[int, int]):
+    def __init__(self, num: int, xy: tuple[int, int],):
         """
         こうかとん画像Surfaceを生成する
         引数1 num：こうかとん画像ファイル名の番号
@@ -43,6 +41,7 @@ class Bird:
         """
         img0 = pg.transform.rotozoom(pg.image.load(f"ex03/fig/{num}.png"), 0, 2.0)
         img = pg.transform.flip(img0, True, False)  # デフォルトのこうかとん（右向き）
+        self.speed = 1
         self.imgs = {  # 0度から反時計回りに定義
             (+5, 0): img,  # 右
             (+5, -5): pg.transform.rotozoom(img, 45, 1.0),  # 右上
@@ -75,14 +74,15 @@ class Bird:
         sum_mv = [0, 0]
         for k, mv in __class__.delta.items():
             if key_lst[k]:
-                sum_mv[0] += mv[0]
-                sum_mv[1] += mv[1]
+                sum_mv[0] += mv[0] * self.speed
+                sum_mv[1] += mv[1] * self.speed
         self.rct.move_ip(sum_mv)
         if check_bound(self.rct) != (True, True):
             self.rct.move_ip(-sum_mv[0], -sum_mv[1])
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.img = self.imgs[tuple(sum_mv)]
         screen.blit(self.img, self.rct)
+
 
 class Beam:
     def __init__(self, bird: Bird):
@@ -103,6 +103,7 @@ class Beam:
         """
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
+
 
 class Bomb:
     """
@@ -138,6 +139,7 @@ class Bomb:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
         
+
 class Score:
     def __init__(self):
         self.font = pg.font.SysFont("hgp創英角ポップ体", 30)
@@ -147,10 +149,10 @@ class Score:
         self.rct = self.img.get_rect()
         self.rct.center = (100, 50)
 
-
     def update(self, screen:pg.surface):
         self.img  =self.font.render(str(self.score),0, self.color)
         screen.blit(self.img, self.rct.center)
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -163,7 +165,6 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
-    tmr_plus = 1
     while True:
         
         for event in pg.event.get():
@@ -193,7 +194,7 @@ def main():
                     pg.display.update()
                     score.score += 1
 
-                    tmr_plus += 100
+                    bird.speed += 2
 
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -204,7 +205,7 @@ def main():
         if beam is not None:
             beam.update(screen)
         pg.display.update()
-        tmr = tmr + (1 * tmr_plus)
+        tmr += 1
         clock.tick(50)
 
 
