@@ -163,6 +163,7 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
+    tmr_plus = 1
     while True:
         
         for event in pg.event.get():
@@ -192,6 +193,8 @@ def main():
                     pg.display.update()
                     score.score += 1
 
+                    tmr_plus += 100
+
         bombs = [bomb for bomb in bombs if bomb is not None]
 
         key_lst = pg.key.get_pressed()
@@ -201,7 +204,7 @@ def main():
         if beam is not None:
             beam.update(screen)
         pg.display.update()
-        tmr += 1
+        tmr = tmr + (1 * tmr_plus)
         clock.tick(50)
 
 
